@@ -1,0 +1,137 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-16T00:00:00Z",
+  "title": "Design System: Babsha",
+  "seededFrom": { "world": "seed:1a18ea040a4daa67" },
+  "extensions": {
+    "colorMeta": {
+      "felt-deep": { "role": "neutral", "displayName": "Deep Felt", "canonical": "#052A1D", "tonalRamp": ["#010B07", "#031810", "#052A1D", "#0A4430", "#13694A", "#4C9A79", "#94C6AF", "#D3EADF"] },
+      "felt": { "role": "primary", "displayName": "Bottle Felt", "canonical": "#0A4430", "tonalRamp": ["#021A12", "#06291D", "#0A4430", "#13694A", "#2E8B66", "#5FAF8E", "#9ACFB8", "#D6EEE3"] },
+      "felt-lit": { "role": "primary", "displayName": "Lit Felt", "canonical": "#13694A", "tonalRamp": ["#052A1D", "#0A4430", "#13694A", "#1F8760", "#47A583", "#79C3A5", "#AEDDC9", "#DDF3EA"] },
+      "cream": { "role": "secondary", "displayName": "Card Cream", "canonical": "#F1E6CC", "tonalRamp": ["#5E5232", "#8A7B4E", "#B3A271", "#D3C393", "#E4D6B0", "#F1E6CC", "#F8F1DF", "#FDFAF1"] },
+      "cream-deep": { "role": "secondary", "displayName": "Deep Cream", "canonical": "#E4D6B0", "tonalRamp": ["#4F4426", "#7A6C40", "#A59660", "#C6B681", "#E4D6B0", "#EDE2C3", "#F5EDD9", "#FBF7EA"] },
+      "ink": { "role": "neutral", "displayName": "Pine Ink", "canonical": "#0A2E21", "tonalRamp": ["#020D09", "#061C14", "#0A2E21", "#144A37", "#2B6A52", "#5B8F7A", "#98B9AB", "#D2E2DB"] },
+      "gold": { "role": "tertiary", "displayName": "Antique Gold Foil", "canonical": "#D4B35E", "tonalRamp": ["#4A3A0F", "#6E571A", "#8A6A1C", "#B8943C", "#D4B35E", "#E9D28A", "#F0DC9B", "#F8EDC9"] },
+      "gold-deep": { "role": "tertiary", "displayName": "Aged Gold", "canonical": "#8A6A1C", "tonalRamp": ["#2C2108", "#4A3A0F", "#6A511A", "#8A6A1C", "#A98A3A", "#C6AB66", "#DEC995", "#F0E4C6"] },
+      "die-red": { "role": "tertiary", "displayName": "Die Red", "canonical": "#C8232C", "tonalRamp": ["#3A080B", "#5F0F14", "#8F171D", "#C8232C", "#DB5058", "#E8868C", "#F1B5B8", "#F9DFE0"] }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Display", "purpose": "Hero title and closing line only. clamp(60px, 11vw, 150px), deliberately above 6rem." },
+      "lid-title": { "displayName": "Lid Title", "purpose": "Title on the box lid, first screen. clamp(54px, min(8.2vw, 10.4svh), 108px)." },
+      "headline": { "displayName": "Headline", "purpose": "Section heads, clamp(40px, 5vw, 72px)." },
+      "title": { "displayName": "Title", "purpose": "Ledger rows and panel heads." },
+      "body": { "displayName": "Body", "purpose": "Explanation text, Hanken Grotesk 500." },
+      "label": { "displayName": "Label", "purpose": "Buttons, chips and tags: uppercase, tracked, short strings." }
+    },
+    "shadows": [
+      { "name": "lid", "value": "0 50px 90px rgba(0,0,0,.55)", "purpose": "Box lid lifted off the felt." },
+      { "name": "panel", "value": "0 40px 80px rgba(0,0,0,.5)", "purpose": "Cream journey panels." },
+      { "name": "medallion", "value": "0 0 0 7px #0A4430, 0 0 0 9px #B8943C, 0 26px 40px rgba(0,0,0,.5)", "purpose": "Brass ride disc set into the felt; outer ring turns cream on hover." },
+      { "name": "die", "value": "0 20px 24px rgba(0,0,0,.5)", "purpose": "Dice resting on the felt." },
+      { "name": "hud", "value": "0 0 0 1px #D4B35E, 0 0 0 5px #F1E6CC, 0 0 0 6px #8A6A1C, 0 18px 40px rgba(0,0,0,.45)", "purpose": "Ringed plaque for the live readout." }
+    ],
+    "motion": [
+      { "name": "lid-lift", "value": "1.1s cubic-bezier(.6, 0, .2, 1)", "purpose": "The lid translates up and away when a ride is picked." },
+      { "name": "medallion-hover", "value": ".35s cubic-bezier(.2, .8, .2, 1)", "purpose": "Medallion rises 10px; wheels spin at .8s linear." },
+      { "name": "state-quick", "value": ".25s ease", "purpose": "Button fills and colour changes." },
+      { "name": "reduced-motion", "value": "marquee, loader and bob animations off; lid and ride transitions none", "purpose": "prefers-reduced-motion and no-WebGL get the plain page without the picker." }
+    ],
+    "breakpoints": [
+      { "name": "phone", "value": "560px" },
+      { "name": "tablet", "value": "900px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Outline Button",
+      "kind": "button",
+      "refersTo": "button-outline",
+      "description": "Default gold hairline button; nav and secondary actions.",
+      "html": "<button class=\"ds-btn\">Play now</button>",
+      "css": ".ds-btn { display:inline-flex; align-items:center; justify-content:center; min-height:44px; padding:0 22px; border:1px solid #D4B35E; border-radius:2px; background:transparent; color:#D4B35E; font:700 14px/1 'Hanken Grotesk', system-ui, sans-serif; letter-spacing:.16em; text-transform:uppercase; cursor:pointer; transition:background .25s ease, color .25s ease, transform .2s ease; } .ds-btn:hover { background:#D4B35E; color:#052A1D; } .ds-btn:focus-visible { outline:3px solid #D4B35E; outline-offset:3px; } .ds-btn:active { transform:translateY(1px); }"
+    },
+    {
+      "name": "Gold Button",
+      "kind": "button",
+      "refersTo": "button-gold",
+      "description": "The single primary call to action in a view.",
+      "html": "<button class=\"ds-btn-gold\">Play now</button>",
+      "css": ".ds-btn-gold { display:inline-flex; align-items:center; justify-content:center; min-height:56px; padding:0 32px; border:1px solid #D4B35E; border-radius:2px; background:#D4B35E; color:#052A1D; font:700 15px/1 'Hanken Grotesk', system-ui, sans-serif; letter-spacing:.16em; text-transform:uppercase; cursor:pointer; transition:background .25s ease, color .25s ease, transform .2s ease; } .ds-btn-gold:hover { background:#F1E6CC; } .ds-btn-gold:focus-visible { outline:3px solid #D4B35E; outline-offset:3px; } .ds-btn-gold:active { transform:translateY(1px); }"
+    },
+    {
+      "name": "Cream Panel",
+      "kind": "card",
+      "refersTo": "card-panel",
+      "description": "Journey stop card: cream stock, ink text, gold double border.",
+      "html": "<div class=\"ds-panel\"><h2>Pick a ride</h2><p>One line of rules, in plain words.</p></div>",
+      "css": ".ds-panel { position:relative; width:360px; padding:38px 36px 32px; background:#F1E6CC; color:#0A2E21; box-shadow:0 40px 80px rgba(0,0,0,.5); } .ds-panel::after { content:''; position:absolute; inset:-7px; border:3px solid #D4B35E; pointer-events:none; } .ds-panel::before { content:''; position:absolute; inset:9px; border:1px solid rgba(10,46,33,.3); pointer-events:none; } .ds-panel h2 { margin:0 0 14px; font:400 44px/.98 Gloock, 'Times New Roman', serif; letter-spacing:-.02em; } .ds-panel p { margin:0; font:500 17px/1.55 'Hanken Grotesk', system-ui, sans-serif; color:rgba(10,46,33,.86); }"
+    },
+    {
+      "name": "Ride Medallion",
+      "kind": "custom",
+      "refersTo": "ride-disc",
+      "description": "Brass-rimmed ride picker disc with name and caption.",
+      "html": "<button class=\"ds-ride\"><span class=\"ds-disc\"></span><b>Rickshaw</b><span class=\"ds-cap\">The classic</span></button>",
+      "css": ".ds-ride { all:unset; box-sizing:border-box; cursor:pointer; display:flex; flex-direction:column; align-items:center; width:120px; transition:transform .35s cubic-bezier(.2,.8,.2,1); } .ds-disc { width:120px; height:120px; border-radius:50%; background:radial-gradient(circle at 35% 30%, #17835b, #0b4a33) padding-box, linear-gradient(135deg, #F0DC9B, #B8943C 40%, #8A6A1C 62%, #E9D28A) border-box; border:3px solid transparent; box-shadow:0 0 0 7px #0A4430, 0 0 0 9px #B8943C, 0 26px 40px rgba(0,0,0,.5); transition:box-shadow .3s ease; } .ds-ride b { margin-top:18px; font:400 24px/1 Gloock, 'Times New Roman', serif; color:#F1E6CC; } .ds-cap { margin-top:6px; font:700 11px/1.3 'Hanken Grotesk', system-ui, sans-serif; letter-spacing:.28em; text-transform:uppercase; color:#D4B35E; } .ds-ride:hover, .ds-ride:focus-visible { transform:translateY(-10px); } .ds-ride:hover .ds-disc, .ds-ride:focus-visible .ds-disc { box-shadow:0 0 0 7px #0A4430, 0 0 0 9px #F1E6CC, 0 30px 50px rgba(0,0,0,.55); } .ds-ride:focus-visible { outline:3px solid #D4B35E; outline-offset:12px; border-radius:12px; }"
+    },
+    {
+      "name": "Ledger Row",
+      "kind": "custom",
+      "refersTo": "ledger",
+      "description": "Feature row between gold hairlines on felt.",
+      "html": "<div class=\"ds-ledger\"><h3>Live auctions</h3><p>A short line of explanation.</p></div>",
+      "css": ".ds-ledger { display:grid; grid-template-columns:1fr 1.1fr; gap:24px 56px; align-items:baseline; padding:30px 6px; background:#0A4430; border-top:1px solid rgba(212,179,94,.5); border-bottom:1px solid rgba(212,179,94,.5); transition:background .3s ease, padding .3s ease; } .ds-ledger:hover { background:rgba(212,179,94,.07); padding-left:18px; } .ds-ledger h3 { margin:0; font:400 34px/.98 Gloock, 'Times New Roman', serif; letter-spacing:-.02em; color:#F1E6CC; } .ds-ledger p { margin:0; font:500 18px/1.55 'Hanken Grotesk', system-ui, sans-serif; color:rgba(241,230,204,.76); max-width:46ch; }"
+    },
+    {
+      "name": "Chip",
+      "kind": "chip",
+      "refersTo": "chip",
+      "description": "Small outlined label on cream stock with a colour swatch.",
+      "html": "<span class=\"ds-chip\"><i></i>Lucky</span>",
+      "css": ".ds-chip { display:inline-flex; align-items:center; gap:8px; padding:7px 12px; border:1px solid rgba(10,46,33,.4); background:#F1E6CC; color:#0A2E21; font:700 12px/1 'Hanken Grotesk', system-ui, sans-serif; letter-spacing:.14em; text-transform:uppercase; } .ds-chip i { width:10px; height:10px; background:#0A2E21; display:inline-block; }"
+    },
+    {
+      "name": "HUD Plaque",
+      "kind": "custom",
+      "refersTo": "hud",
+      "description": "Ringed cream readout shown during the journey, Gloock tabular figures.",
+      "html": "<div class=\"ds-hud\">Roll 7</div>",
+      "css": ".ds-hud { display:inline-flex; align-items:center; gap:12px; padding:10px 22px; background:#F1E6CC; color:#0A2E21; font:400 24px/1 Gloock, 'Times New Roman', serif; font-variant-numeric:tabular-nums; box-shadow:0 0 0 1px #D4B35E, 0 0 0 5px #F1E6CC, 0 0 0 6px #8A6A1C, 0 18px 40px rgba(0,0,0,.45); }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Collector's Box",
+    "overview": "The whole site is one boxed game seen from above. A bottle-green felt table, a cream card-stock lid, brass ride pieces, and antique gold foil used only for hairlines, double rules and the single call to action. It should feel like an edition people would pay for, though the game is free. The first screen is the box lid itself; picking a ride lifts it away and the 3D board appears on the felt.\n\nDensity is low and deliberate: large serif type on flat, grained surfaces, one gold accent, no decoration that is not physical (paper grain, foil, felt, dice). Depth comes from objects resting on a surface, not from light effects. The scene behind the page is retinted to the same world: felt green with cream and gold light only.",
+    "keyCharacteristics": [
+      "Three materials only: felt (green, grained), card stock (cream, grained, ink text), foil (gold gradient, thin).",
+      "Gloock display over Hanken Grotesk body; uppercase tracked grotesk only on buttons and small chips.",
+      "Cream cards carry a gold double border: a 3px foil outer rule and a 1px ink inner rule.",
+      "Deliberately oversized editorial display type, up to 150px.",
+      "Motion is physical: the lid lifts, discs spin on hover, panels rise into place on scroll."
+    ],
+    "rules": [
+      { "name": "The Foil Is Thin Rule", "body": "Gold is a line or a single button fill, never a large surface. A screen with a gold area bigger than a button has gone wrong.", "section": "colors" },
+      { "name": "The Red Is An Object Rule", "body": "Red belongs to dice and rides. Do not use it for links, badges, alerts or buttons.", "section": "colors" },
+      { "name": "The Three Stocks Rule", "body": "Every surface is felt, cream stock or foil. A fourth surface colour is a new world, not an extension.", "section": "colors" },
+      { "name": "The Serif Speaks Rule", "body": "Headlines, numerals, medallion names and the HUD readout are Gloock. Grotesk never sets a headline.", "section": "typography" },
+      { "name": "The Big On Purpose Rule", "body": "Display type above 6rem is allowed only for the hero title, the closing line and the lid title, and it always uses a clamp that falls to 60px or lower on phones.", "section": "typography" },
+      { "name": "The Resting Object Rule", "body": "A shadow means an object is lying on the felt, so it always falls straight down and is large and soft. Hard offset shadows and coloured glows are not part of this world.", "section": "elevation" }
+    ],
+    "dos": [
+      "Do build every surface from felt (#0A4430 family), card stock (#F1E6CC with grain) or thin gold foil (#D4B35E).",
+      "Do set all headlines in Gloock and every sentence of explanation in Hanken Grotesk 500.",
+      "Do frame cream cards with the gold double border and keep corners at 0 to 2px.",
+      "Do cast big, soft, straight-down black shadows under raised objects.",
+      "Do keep the 3D scene on felt green with cream and gold light only.",
+      "Do give reduced-motion and no-WebGL visitors the plain page: all copy readable without the picker or fixed layers."
+    ],
+    "donts": [
+      "Don't use backdrop blur, glass panels, neon or glows; this world replaced a dark glass site.",
+      "Don't use red outside dice and vehicle bodies, or add a rainbow of accent colours to the interface.",
+      "Don't fill large areas with gold or add a fourth surface colour.",
+      "Don't round cards or buttons; only medallions and dice are round.",
+      "Don't use hard offset shadows or tinted glows.",
+      "Don't set display type above 6rem outside the hero title, the lid title and the closing line."
+    ]
+  }
+}

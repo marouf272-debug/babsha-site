@@ -16,13 +16,17 @@ import cfg from './data/scene.json';
 import tilesData from './data/tiles.json';
 import en from './data/en.json';
 
-const SERIF = '"Bricolage Grotesque", system-ui, sans-serif';
+const SERIF = '"Hanken Grotesk", system-ui, sans-serif';
+const DISPLAY = '"Gloock", "Times New Roman", serif';
 const CELL = 264;
 const LABEL_SCALE = 150;
 
 // Three looks for the board, switchable with ?theme= for comparing.
-export type ThemeName = 'emerald' | 'obsidian' | 'ceramic';
+export type ThemeName = 'heritage' | 'emerald' | 'obsidian' | 'ceramic';
+const RAINBOW = ['224,38,47', '236,62,140', '247,198,49', '18,165,181', '36,67,160'];
 const THEMES = {
+  heritage: { plinth: '#0A3322', metal: 0.35, rough: 0.3, inlay: '#D4B35E', felt: ['#1b8a5f', '#0f5c40', '#06301f'], tile: '#E4D8B8', face: ['#F1E6CC', '#E2D4AE'], emblem: '212,179,94', floor: '#07140f',
+    hues: ['212,179,94', '241,230,204', '200,35,44'], kites: ['#F1E6CC', '#D4B35E', '#C8232C', '#13694A'], bokeh: ['#ffe9b0', '#ffcf85', '#F1E6CC'], tones: ['#17302a', '#1d3a31', '#22382f', '#2a3b33'] },
   emerald: { plinth: '#0e1413', metal: 0.55, rough: 0.3, inlay: '#D9B25F', felt: ['#17855e', '#0d5f43', '#05301f'], tile: '#E6DCC6', face: ['#EAE1CD', '#DCD0B7'], emblem: '217,178,95', floor: '#0b100e' },
   obsidian: { plinth: '#08090b', metal: 0.7, rough: 0.22, inlay: '#cfd5de', felt: ['#2a3f73', '#16244a', '#070d1f'], tile: '#DEDBD3', face: ['#E6E3DB', '#D4D0C6'], emblem: '207,213,222', floor: '#06070a' },
   ceramic: { plinth: '#e6dfd0', metal: 0.05, rough: 0.35, inlay: '#d79c80', felt: ['#1b8a82', '#0f6862', '#073d3a'], tile: '#E8DFCC', face: ['#EFE6D3', '#DFD3BA'], emblem: '243,226,200', floor: '#14110e' },
@@ -54,6 +58,11 @@ export class Board {
   readonly token = new THREE.Group();
   private readonly rides = {} as Record<Ride, { g: THREE.Group; wheels: Array<{ g: THREE.Group; r: number }> }>;
   private ride: Ride = 'rickshaw';
+  private lastYaw = 0;
+  private lean = 0;
+  private dustAcc = 0;
+  private readonly trail = new THREE.Group();
+  private dust!: { pts: THREE.Points; pos: Float32Array; vel: Float32Array; life: Float32Array; n: number; i: number };
   private readonly composer: EffectComposer | null;
   private readonly half: number;
   private readonly placements: Placement[];
@@ -61,7 +70,6 @@ export class Board {
   private readonly T;
   private skylineMat!: THREE.MeshStandardMaterial;
   private readonly kites: Array<{ m: THREE.Group; base: THREE.Vector3; ph: number; size: number }> = [];
-  private readonly bokeh: THREE.Points;
 
   constructor(canvas: HTMLCanvasElement, private readonly opts: BoardOptions) {
     const high = opts.quality === 'high';
@@ -69,7 +77,7 @@ export class Board {
     this.renderer = new THREE.WebGLRenderer({ canvas, antialias: !high, powerPreference: 'high-performance' });
     this.renderer.setPixelRatio(opts.pixelRatio);
     this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    this.renderer.toneMappingExposure = 0.85;
+    this.renderer.toneMappingExposure = 0.8;
     this.renderer.shadowMap.enabled = true;
     this.renderer.shadowMap.type = THREE.PCFShadowMap;
     this.half = (9 * cfg.board.tileWidth + 2 * cfg.board.tileDepth) / 2;
@@ -110,7 +118,6 @@ export class Board {
 
     this.buildFloor();
     this.buildSkyline();
-    this.bokeh = this.buildBokeh();
     this.buildKites();
     this.buildBoard();
     this.buildTiles();
@@ -119,6 +126,7 @@ export class Board {
     this.dice.push(this.makeDie('#F6EEDC', '#1E1B18'), this.makeDie('#D8222B', '#FBF4E4'));
     this.scene.add(...this.dice);
     this.buildVehicles();
+    this.makeMotionRigs();
     this.scene.add(this.token);
 
     if (high) {
@@ -147,10 +155,10 @@ export class Board {
 
   // Window lights come on as the day fades.
   setNight(n: number): void {
-    for (const m of glowMats) m.emissiveIntensity = n * 2.2;
-    this.skylineMat.emissiveIntensity = n * 0.7;
-    this.scene.environmentIntensity = 0.3 + (1 - n) * 0.35;
-    (this.bokeh.material as THREE.PointsMaterial).opacity = 0.15 + n * 0.8;
+    for (const m of glowMats) m.emissiveIntensity = n * 0.9;
+    this.skylineMat.emissiveIntensity = n * 0.22;
+    this.scene.environmentIntensity = 0.24 + (1 - n) * 0.2;
+    
   }
 
   // Kites drift and bob in the sky; call every frame.
@@ -225,13 +233,88 @@ export class Board {
     (Object.keys(this.rides) as Ride[]).forEach((k) => { this.rides[k].g.visible = k === r; });
   }
 
-  // The vehicle rolls: it faces where it is going and its wheels turn with the distance covered.
-  placeToken(a: number): void {
+  // The vehicle rolls: it faces where it is going, its wheels turn with the distance covered, and it
+  // leans into corners. `dt` lets the lean follow the turning rate.
+  placeToken(a: number, dt = 0.016): void {
     const here = this.spotAt(a), ahead = this.spotAt(a + 0.35);
     this.token.position.copy(here);
     const dx = ahead.x - here.x, dz = ahead.z - here.z;
-    if (Math.abs(dx) + Math.abs(dz) > 1e-4) this.token.rotation.y = Math.atan2(-dz, dx);
+    if (Math.abs(dx) + Math.abs(dz) > 1e-4) {
+      const yaw = Math.atan2(-dz, dx);
+      let d = yaw - this.lastYaw;
+      d = Math.atan2(Math.sin(d), Math.cos(d));
+      const rate = d / Math.max(dt, 0.001);
+      this.lean += (THREE.MathUtils.clamp(-rate * 0.05, -0.2, 0.2) - this.lean) * Math.min(1, dt * 8);
+      this.lastYaw = yaw;
+      this.token.rotation.order = 'YXZ';
+      this.token.rotation.y = yaw;
+      this.token.rotation.x = this.lean;
+    }
     for (const w of this.rides[this.ride].wheels) w.g.rotation.z = -a / w.r;
+  }
+
+  // Speed cues: gold speed streaks behind the pawn, dust puffs from the rear wheels, a camera FOV kick.
+  motion(speed01: number, dt: number): void {
+    const s = THREE.MathUtils.clamp(speed01, 0, 1);
+    this.trail.children.forEach((m, i) => {
+      const len = (0.12 + s * 0.95) * (0.6 + 0.4 * ((i * 37) % 5) / 4);
+      m.scale.x = Math.max(0.001, len);
+      m.position.x = -0.5 - len / 2;
+      (m as THREE.Mesh<THREE.BufferGeometry, THREE.MeshBasicMaterial>).material.opacity = s * 0.55;
+    });
+    const fov = 32 + s * 5;
+    if (Math.abs(this.camera.fov - fov) > 0.05) { this.camera.fov += (fov - this.camera.fov) * Math.min(1, dt * 6); this.camera.updateProjectionMatrix(); }
+    const d = this.dust;
+    const yaw = this.token.rotation.y, fx = Math.cos(yaw), fz = -Math.sin(yaw);
+    this.dustAcc += s * dt * 40;
+    while (this.dustAcc >= 1) {
+      this.dustAcc -= 1;
+      const k = d.i++ % d.n;
+      const r = () => (Math.random() - 0.5) * 0.18;
+      d.pos[k * 3] = this.token.position.x - fx * 0.55 + r();
+      d.pos[k * 3 + 1] = this.token.position.y + 0.06;
+      d.pos[k * 3 + 2] = this.token.position.z - fz * 0.55 + r();
+      d.vel[k * 3] = -fx * 0.25 + r() * 2; d.vel[k * 3 + 1] = 0.35 + Math.random() * 0.3; d.vel[k * 3 + 2] = -fz * 0.25 + r() * 2;
+      d.life[k] = 1;
+    }
+    const col = d.pts.geometry.attributes['color'] as THREE.BufferAttribute;
+    for (let k = 0; k < d.n; k++) {
+      if (d.life[k]! <= 0) { col.setXYZ(k, 0, 0, 0); continue; }
+      d.life[k] = d.life[k]! - dt * 1.4;
+      d.pos[k * 3] = d.pos[k * 3]! + d.vel[k * 3]! * dt;
+      d.pos[k * 3 + 1] = d.pos[k * 3 + 1]! + d.vel[k * 3 + 1]! * dt;
+      d.pos[k * 3 + 2] = d.pos[k * 3 + 2]! + d.vel[k * 3 + 2]! * dt;
+      const l = Math.max(0, d.life[k]!) * 0.5;
+      col.setXYZ(k, 0.85 * l, 0.8 * l, 0.62 * l);
+    }
+    col.needsUpdate = true;
+    (d.pts.geometry.attributes['position'] as THREE.BufferAttribute).needsUpdate = true;
+  }
+
+  private makeMotionRigs(): void {
+    const mat = () => new THREE.MeshBasicMaterial({ color: '#F1D98A', transparent: true, opacity: 0, depthWrite: false, fog: false });
+    for (let i = 0; i < 6; i++) {
+      const m = new THREE.Mesh(new THREE.PlaneGeometry(1, 0.035), mat());
+      m.rotation.x = -Math.PI / 2; // lies flat, streak along local x
+      m.position.set(-0.6, 0.06 + (i % 3) * 0.1, (i - 2.5) * 0.09);
+      this.trail.add(m);
+    }
+    this.token.add(this.trail);
+    const n = 40;
+    const pos = new Float32Array(n * 3).fill(-50), col = new Float32Array(n * 3);
+    const geo = new THREE.BufferGeometry();
+    geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+    geo.setAttribute('color', new THREE.BufferAttribute(col, 3));
+    const sc = document.createElement('canvas');
+    sc.width = sc.height = 64;
+    const sg = sc.getContext('2d')!;
+    const rg = sg.createRadialGradient(32, 32, 0, 32, 32, 32);
+    rg.addColorStop(0, 'rgba(255,255,255,1)'); rg.addColorStop(1, 'rgba(255,255,255,0)');
+    sg.fillStyle = rg; sg.fillRect(0, 0, 64, 64);
+    const pts = new THREE.Points(geo, new THREE.PointsMaterial({ map: new THREE.CanvasTexture(sc), size: 0.34, sizeAttenuation: true, vertexColors: true, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, fog: false }));
+    pts.frustumCulled = false;
+    this.scene.add(pts);
+    this.dust = { pts, pos, vel: new Float32Array(n * 3), life: new Float32Array(n), n, i: 0 };
   }
 
   // ---------- floor, plinth, felt ----------
@@ -241,7 +324,7 @@ export class Board {
     floor.rotation.x = -Math.PI / 2;
     floor.position.y = -0.46;
     floor.receiveShadow = true;
-    const apron = new THREE.Mesh(new THREE.CircleGeometry(130, 48), new THREE.MeshStandardMaterial({ color: '#070b09', roughness: 0.8 }));
+    const apron = new THREE.Mesh(new THREE.CircleGeometry(130, 48), new THREE.MeshStandardMaterial({ color: '#041a12', roughness: 0.8 }));
     apron.rotation.x = -Math.PI / 2;
     apron.position.y = -0.47;
     this.scene.add(floor, apron);
@@ -254,14 +337,14 @@ export class Board {
     c.width = c.height = S;
     const g = c.getContext('2d')!;
     const rg = g.createRadialGradient(S / 2, S / 2, 0, S / 2, S / 2, S / 2);
-    rg.addColorStop(0, '#16221d');
-    rg.addColorStop(0.5, '#0d1512');
-    rg.addColorStop(1, '#070b09');
+    rg.addColorStop(0, '#14543b');
+    rg.addColorStop(0.5, '#0d3b2a');
+    rg.addColorStop(1, '#062418');
     g.fillStyle = rg;
     g.fillRect(0, 0, S, S);
     g.translate(S / 2, S / 2);
     g.lineWidth = 2;
-    const hues = ['224,38,47', '236,62,140', '247,198,49', '18,165,181', '36,67,160'];
+    const hues = (this.T as { hues?: string[] }).hues ?? RAINBOW;
     for (let ring = 0; ring < 10; ring++) {
       const R = (8.2 + ring * 4.6) * PX, n = 22 + ring * 6, size = (1.5 + ring * 0.28) * PX;
       const fade = 1 - ring * 0.065;
@@ -304,7 +387,7 @@ export class Board {
         bars.push(g);
       }
     };
-    frame(H + 0.2, 0.07, 0.07, 0.035); // outer inlay
+    frame(H + 0.2, 0.11, 0.08, 0.04); // outer inlay
     frame(FELT_HALF + 0.03, 0.045, 0.05, 0.115); // fine line around the felt
     const goldMesh = new THREE.Mesh(mergeGeometries(bars)!, gold);
     goldMesh.castShadow = true;
@@ -365,7 +448,7 @@ export class Board {
     g.fillStyle = `rgba(${this.T.emblem},0.95)`;
     g.textAlign = 'center';
     g.textBaseline = 'middle';
-    g.font = `800 250px ${SERIF}`;
+    g.font = `400 250px ${DISPLAY}`;
     g.fillText('Babsha', cx, cy + 40);
     g.font = `700 52px ${SERIF}`;
     g.fillStyle = `rgba(${this.T.emblem},0.8)`;
@@ -644,7 +727,7 @@ export class Board {
     let seed = 7;
     const rnd = () => { seed = (seed * 16807) % 2147483647; return seed / 2147483647; };
     const geos: THREE.BufferGeometry[] = [];
-    const tones = ['#27373a', '#2f403c', '#363c45', '#413f3b', '#29394a', '#3a4a43'];
+    const tones = (this.T as { tones?: string[] }).tones ?? ['#27373a', '#2f403c', '#363c45', '#413f3b', '#29394a', '#3a4a43'];
     for (let i = 0; i < 300; i++) {
       const a = rnd() * Math.PI * 2, r = 26 + rnd() * 70;
       const w = 1.6 + rnd() * 3.4, d = 1.6 + rnd() * 3.4, h = 3 + Math.pow(rnd(), 2.1) * 30;
@@ -660,13 +743,13 @@ export class Board {
       g.setAttribute('color', new THREE.BufferAttribute(arr, 3));
       geos.push(g);
     }
-    const mat = new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.85, map: windowTexture(), emissiveMap: windowLights(), emissive: new THREE.Color('#ffc66e'), emissiveIntensity: 0 });
+    const mat = new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.85, map: windowTexture(), emissiveMap: windowLights(), emissive: new THREE.Color('#f6e7c1'), emissiveIntensity: 0 });
     this.skylineMat = mat; // dimmer than the board's own windows so it reads as distance, not glare
     this.scene.add(new THREE.Mesh(mergeGeometries(geos)!, mat));
   }
 
   private buildKites(): void {
-    const colors = ['#E0262F', '#EC3E8C', '#F7C631', '#12A5B5', '#2443A0', '#EE7D2B'];
+    const colors = (this.T as { kites?: string[] }).kites ?? ['#E0262F', '#EC3E8C', '#F7C631', '#12A5B5', '#2443A0', '#EE7D2B'];
     for (let i = 0; i < 26; i++) {
       const a = (i / 26) * Math.PI * 2 + Math.random() * 0.2, r = 30 + Math.random() * 22;
       const m = new THREE.Group();
@@ -697,7 +780,7 @@ export class Board {
     g.fillRect(0, 0, 64, 64);
     const n = 90;
     const pos = new Float32Array(n * 3), col = new Float32Array(n * 3);
-    const palette = [new THREE.Color('#ffcf85'), new THREE.Color('#ff8fb8'), new THREE.Color('#7fe0e8'), new THREE.Color('#ffe9b0')];
+    const palette = ((this.T as { bokeh?: string[] }).bokeh ?? ['#ffcf85', '#ff8fb8', '#7fe0e8', '#ffe9b0']).map((h) => new THREE.Color(h));
     for (let i = 0; i < n; i++) {
       const a = Math.random() * Math.PI * 2, r = 12 + Math.random() * 40;
       pos.set([Math.cos(a) * r, 1 + Math.random() * 15, Math.sin(a) * r], i * 3);

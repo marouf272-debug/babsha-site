@@ -112,7 +112,7 @@ export class Scenery {
     const add = (m: THREE.Mesh) => { m.castShadow = true; m.receiveShadow = true; group.add(m); };
     if (this.solids.length) add(new THREE.Mesh(mergeGeometries(this.solids)!, new THREE.MeshStandardMaterial({ vertexColors: true, flatShading: true, roughness: 0.55, metalness: 0.04 })));
     if (this.windows.length) {
-      const mat = new THREE.MeshStandardMaterial({ vertexColors: true, flatShading: true, roughness: 0.4, metalness: 0.12, map: windowTexture(), emissiveMap: windowLights(), emissive: new THREE.Color('#ffcf85'), emissiveIntensity: 0 });
+      const mat = new THREE.MeshStandardMaterial({ vertexColors: true, flatShading: true, roughness: 0.4, metalness: 0.12, map: windowTexture(), emissiveMap: windowLights(), emissive: new THREE.Color('#f6e7c1'), emissiveIntensity: 0 });
       glowMats.push(mat);
       add(new THREE.Mesh(mergeGeometries(this.windows)!, mat));
     }

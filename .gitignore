@@ -1,3 +1,9 @@
-node_modules
+.impeccable/decision-payload.json
+.impeccable/mocks
+.impeccable/review
+.playwright-cli
+after
+before
 dist
+node_modules
 options

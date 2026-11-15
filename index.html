@@ -5,9 +5,9 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Babsha | Roll. Build. Win.</title>
 <meta name="description" content="Babsha is a free Dhaka-themed property trading board game for your phone browser. Roll the dice, trade with friends and build your way to the top.">
-<meta name="theme-color" content="#08130F">
+<meta name="theme-color" content="#052A1D">
 <meta property="og:title" content="Babsha | Roll. Build. Win.">
-<meta property="og:description" content="A free Dhaka-themed property trading board game. Pass and play with friends or take on the computer.">
+<meta property="og:description" content="A free Dhaka-themed property trading game. Pass and play with friends or take on the computer.">
 <link rel="icon" href="./favicon.svg" type="image/svg+xml">
 </head>
 <body>
@@ -19,160 +19,131 @@
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
   <symbol id="mark" viewBox="0 0 140 120">
-    <g transform="translate(6 26) rotate(-10 40 40)"><rect width="80" height="80" rx="18" fill="#FBF4E4" stroke="#FBF4E4" stroke-width="4"/><g fill="#1E1B18"><circle cx="26" cy="22" r="6"/><circle cx="26" cy="40" r="6"/><circle cx="26" cy="58" r="6"/><circle cx="54" cy="22" r="6"/><circle cx="54" cy="40" r="6"/><circle cx="54" cy="58" r="6"/></g></g>
-    <g transform="translate(58 10) rotate(9 40 40)"><rect width="80" height="80" rx="18" fill="#E0262F" stroke="#FBF4E4" stroke-width="4"/><g fill="#FBF4E4"><circle cx="26" cy="22" r="6"/><circle cx="26" cy="40" r="6"/><circle cx="26" cy="58" r="6"/><circle cx="54" cy="22" r="6"/><circle cx="54" cy="40" r="6"/><circle cx="54" cy="58" r="6"/></g></g>
+    <g transform="translate(6 26) rotate(-10 40 40)"><rect width="80" height="80" rx="18" fill="#F1E6CC" stroke="#F1E6CC" stroke-width="4"/><g fill="#0A2E21"><circle cx="26" cy="22" r="6"/><circle cx="26" cy="40" r="6"/><circle cx="26" cy="58" r="6"/><circle cx="54" cy="22" r="6"/><circle cx="54" cy="40" r="6"/><circle cx="54" cy="58" r="6"/></g></g>
+    <g transform="translate(58 10) rotate(9 40 40)"><rect width="80" height="80" rx="18" fill="#C8232C" stroke="#F1E6CC" stroke-width="4"/><g fill="#F1E6CC"><circle cx="26" cy="22" r="6"/><circle cx="26" cy="40" r="6"/><circle cx="26" cy="58" r="6"/><circle cx="54" cy="22" r="6"/><circle cx="54" cy="40" r="6"/><circle cx="54" cy="58" r="6"/></g></g>
   </symbol>
 </svg>
 
 <header class="nav">
   <a class="brand" href="#top" aria-label="Babsha, back to top"><svg class="mark" viewBox="0 0 140 120" aria-hidden="true"><use href="#mark"/></svg><span>Babsha</span></a>
-  <nav>
-    <a class="btn btn-light" href="https://marouf272-debug.github.io/babsha/" data-play>Play now</a>
-  </nav>
+  <a class="btn" href="https://marouf272-debug.github.io/babsha/" data-play>Play now</a>
 </header>
+
+<div class="table" id="table">
+  <div class="felt" aria-hidden="true"></div>
+  <div class="lid">
+    <div class="copy">
+      <p class="lid-title">Roll.<br>Build.<br>Win.</p>
+      <hr>
+      <p class="sub">A Dhaka property game for 2 to 6 players. Free to play, in your phone's browser.</p>
+    </div>
+    <div class="art" id="lidArt" aria-hidden="true"></div>
+  </div>
+  <div class="pick" id="pick" role="group" aria-label="Pick your ride. It becomes your pawn on the board.">
+    <p class="pick-title">Pick your ride. It becomes your pawn.</p>
+    <div class="rides">
+          <button class="ride" type="button" data-ride="rickshaw" aria-pressed="false">
+            <span class="disc"><svg aria-hidden="true" viewBox="0 0 160 100"><rect x="36" y="63" width="70" height="6" rx="3" fill="#C8232C"/><rect x="42" y="52" width="36" height="10" rx="3" fill="#F1E6CC"/><rect x="38" y="34" width="5" height="26" rx="2" fill="#F1E6CC"/><path d="M40 54Q40 12 84 12L84 54Z" fill="#C8232C"/><path d="M40 54Q40 12 84 12" fill="none" stroke="#D4B35E" stroke-width="3"/><rect x="42" y="58" width="36" height="3" fill="#D4B35E"/><path d="M106 48L122 76M98 44H114" stroke="#F1E6CC" stroke-width="3" stroke-linecap="round"/><circle cx="116" cy="54" r="4" fill="#D4B35E"/><g transform="translate(44 72)"><g class="wh"><circle r="22" fill="none" stroke="#F1E6CC" stroke-width="2.4"/><g stroke="#F1E6CC" stroke-width=".8"><line x1="0" y1="0" x2="20.0" y2="0.0"/><line x1="0" y1="0" x2="18.5" y2="7.7"/><line x1="0" y1="0" x2="14.1" y2="14.1"/><line x1="0" y1="0" x2="7.7" y2="18.5"/><line x1="0" y1="0" x2="0.0" y2="20.0"/><line x1="0" y1="0" x2="-7.7" y2="18.5"/><line x1="0" y1="0" x2="-14.1" y2="14.1"/><line x1="0" y1="0" x2="-18.5" y2="7.7"/><line x1="0" y1="0" x2="-20.0" y2="0.0"/><line x1="0" y1="0" x2="-18.5" y2="-7.7"/><line x1="0" y1="0" x2="-14.1" y2="-14.1"/><line x1="0" y1="0" x2="-7.7" y2="-18.5"/><line x1="0" y1="0" x2="-0.0" y2="-20.0"/><line x1="0" y1="0" x2="7.7" y2="-18.5"/><line x1="0" y1="0" x2="14.1" y2="-14.1"/><line x1="0" y1="0" x2="18.5" y2="-7.7"/></g><circle r="3" fill="#F1E6CC"/></g></g><g transform="translate(122 76)"><g class="wh"><circle r="17" fill="none" stroke="#F1E6CC" stroke-width="2.4"/><g stroke="#F1E6CC" stroke-width=".8"><line x1="0" y1="0" x2="15.0" y2="0.0"/><line x1="0" y1="0" x2="13.9" y2="5.7"/><line x1="0" y1="0" x2="10.6" y2="10.6"/><line x1="0" y1="0" x2="5.7" y2="13.9"/><line x1="0" y1="0" x2="0.0" y2="15.0"/><line x1="0" y1="0" x2="-5.7" y2="13.9"/><line x1="0" y1="0" x2="-10.6" y2="10.6"/><line x1="0" y1="0" x2="-13.9" y2="5.7"/><line x1="0" y1="0" x2="-15.0" y2="0.0"/><line x1="0" y1="0" x2="-13.9" y2="-5.7"/><line x1="0" y1="0" x2="-10.6" y2="-10.6"/><line x1="0" y1="0" x2="-5.7" y2="-13.9"/><line x1="0" y1="0" x2="-0.0" y2="-15.0"/><line x1="0" y1="0" x2="5.7" y2="-13.9"/><line x1="0" y1="0" x2="10.6" y2="-10.6"/><line x1="0" y1="0" x2="13.9" y2="-5.7"/></g><circle r="3" fill="#F1E6CC"/></g></g></svg></span><b>Rickshaw</b><span class="cap">The classic</span>
+          </button>
+          <button class="ride" type="button" data-ride="cng" aria-pressed="false">
+            <span class="disc"><svg aria-hidden="true" viewBox="0 0 160 100"><rect x="22" y="52" width="108" height="32" rx="13" fill="#C8232C"/><path d="M44 54L52 24Q54 20 60 20H98Q104 20 106 24L114 54Z" fill="#C8232C"/><rect x="48" y="14" width="64" height="7" rx="3" fill="#0A3A28"/><path d="M57 28H98L104 47H52Z" fill="#0A3A28"/><rect x="22" y="68" width="108" height="5" fill="#D4B35E"/><circle cx="132" cy="62" r="5" fill="#F1E6CC"/><g transform="translate(48 86)"><g class="wh"><circle r="13" fill="#0A3A28" stroke="#F1E6CC" stroke-width="1.6"/><circle r="7.2" fill="#F1E6CC"/><circle cx="4.3" cy="0.0" r="1.6" fill="#0A3A28"/><circle cx="1.3" cy="4.1" r="1.6" fill="#0A3A28"/><circle cx="-3.5" cy="2.5" r="1.6" fill="#0A3A28"/><circle cx="-3.5" cy="-2.5" r="1.6" fill="#0A3A28"/><circle cx="1.3" cy="-4.1" r="1.6" fill="#0A3A28"/></g></g><g transform="translate(112 86)"><g class="wh"><circle r="13" fill="#0A3A28" stroke="#F1E6CC" stroke-width="1.6"/><circle r="7.2" fill="#F1E6CC"/><circle cx="4.3" cy="0.0" r="1.6" fill="#0A3A28"/><circle cx="1.3" cy="4.1" r="1.6" fill="#0A3A28"/><circle cx="-3.5" cy="2.5" r="1.6" fill="#0A3A28"/><circle cx="-3.5" cy="-2.5" r="1.6" fill="#0A3A28"/><circle cx="1.3" cy="-4.1" r="1.6" fill="#0A3A28"/></g></g></svg></span><b>CNG</b><span class="cap">Loud and quick</span>
+          </button>
+          <button class="ride" type="button" data-ride="bus" aria-pressed="false">
+            <span class="disc"><svg aria-hidden="true" viewBox="0 0 160 100"><rect x="10" y="24" width="140" height="52" rx="10" fill="#C8232C"/><rect x="10" y="24" width="140" height="7" rx="3" fill="#F1E6CC"/><rect x="18" y="36" width="124" height="20" rx="3" fill="#0A3A28"/><g stroke="#C8232C" stroke-width="2"><line x1="46" y1="36" x2="46" y2="56"/><line x1="76" y1="36" x2="76" y2="56"/><line x1="106" y1="36" x2="106" y2="56"/></g><rect x="10" y="63" width="140" height="5" fill="#D4B35E"/><circle cx="147" cy="66" r="4" fill="#F1E6CC"/><g transform="translate(40 80)"><g class="wh"><circle r="15" fill="#0A3A28" stroke="#F1E6CC" stroke-width="1.6"/><circle r="8.2" fill="#F1E6CC"/><circle cx="5.0" cy="0.0" r="1.6" fill="#0A3A28"/><circle cx="1.5" cy="4.7" r="1.6" fill="#0A3A28"/><circle cx="-4.0" cy="2.9" r="1.6" fill="#0A3A28"/><circle cx="-4.0" cy="-2.9" r="1.6" fill="#0A3A28"/><circle cx="1.5" cy="-4.7" r="1.6" fill="#0A3A28"/></g></g><g transform="translate(120 80)"><g class="wh"><circle r="15" fill="#0A3A28" stroke="#F1E6CC" stroke-width="1.6"/><circle r="8.2" fill="#F1E6CC"/><circle cx="5.0" cy="0.0" r="1.6" fill="#0A3A28"/><circle cx="1.5" cy="4.7" r="1.6" fill="#0A3A28"/><circle cx="-4.0" cy="2.9" r="1.6" fill="#0A3A28"/><circle cx="-4.0" cy="-2.9" r="1.6" fill="#0A3A28"/><circle cx="1.5" cy="-4.7" r="1.6" fill="#0A3A28"/></g></g></svg></span><b>Bus</b><span class="cap">Big and bold</span>
+          </button>
+    </div>
+  </div>
+  <div class="die d1" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></div><div class="die d2" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+</div>
 
 <main id="top">
   <section class="chapter hero" data-k="0">
     <div class="hero-copy" id="heroCopy">
-      <p class="eyebrow">A property trading game</p>
-      <h1>Roll. Build. Win.</h1>
-      <div class="slot">
-        <div class="pick" id="pick" role="group" aria-label="Pick your ride">
-          <p class="pick-title">Pick your ride. It becomes your pawn on the board.</p>
-          <div class="rides">
-            <button class="ride" type="button" data-ride="rickshaw" aria-pressed="false">
-              <svg viewBox="0 0 160 100" aria-hidden="true"><rect x="36" y="63" width="70" height="6" rx="3" fill="#E0262F"/><rect x="42" y="52" width="36" height="10" rx="3" fill="#F6EEDC"/><rect x="38" y="34" width="5" height="26" rx="2" fill="#F6EEDC"/><path d="M40 54Q40 12 84 12L84 54Z" fill="#E0262F"/><path d="M40 54Q40 12 84 12" fill="none" stroke="#F7C631" stroke-width="3"/><rect x="42" y="58" width="36" height="3" fill="#F7C631"/><rect x="48" y="65" width="44" height="2.5" fill="#12A5B5"/><path d="M106 48L122 76" stroke="#F6EEDC" stroke-width="3" stroke-linecap="round"/><path d="M98 44H114" stroke="#F6EEDC" stroke-width="3" stroke-linecap="round"/><circle cx="116" cy="54" r="4" fill="#EC3E8C"/><g transform="translate(44 72)"><g class="wh"><circle r="22" fill="none" stroke="#141414" stroke-width="3"/><circle r="20" fill="none" stroke="#F6EEDC" stroke-width="1.6"/><g stroke="#F6EEDC" stroke-width="0.9"><line x1="0" y1="0" x2="20.0" y2="0.0"/><line x1="0" y1="0" x2="18.5" y2="7.7"/><line x1="0" y1="0" x2="14.1" y2="14.1"/><line x1="0" y1="0" x2="7.7" y2="18.5"/><line x1="0" y1="0" x2="0.0" y2="20.0"/><line x1="0" y1="0" x2="-7.7" y2="18.5"/><line x1="0" y1="0" x2="-14.1" y2="14.1"/><line x1="0" y1="0" x2="-18.5" y2="7.7"/><line x1="0" y1="0" x2="-20.0" y2="0.0"/><line x1="0" y1="0" x2="-18.5" y2="-7.7"/><line x1="0" y1="0" x2="-14.1" y2="-14.1"/><line x1="0" y1="0" x2="-7.7" y2="-18.5"/><line x1="0" y1="0" x2="-0.0" y2="-20.0"/><line x1="0" y1="0" x2="7.7" y2="-18.5"/><line x1="0" y1="0" x2="14.1" y2="-14.1"/><line x1="0" y1="0" x2="18.5" y2="-7.7"/></g><circle r="3" fill="#F6EEDC"/></g></g><g transform="translate(122 76)"><g class="wh"><circle r="17" fill="none" stroke="#141414" stroke-width="3"/><circle r="15" fill="none" stroke="#F6EEDC" stroke-width="1.6"/><g stroke="#F6EEDC" stroke-width="0.9"><line x1="0" y1="0" x2="15.0" y2="0.0"/><line x1="0" y1="0" x2="13.9" y2="5.7"/><line x1="0" y1="0" x2="10.6" y2="10.6"/><line x1="0" y1="0" x2="5.7" y2="13.9"/><line x1="0" y1="0" x2="0.0" y2="15.0"/><line x1="0" y1="0" x2="-5.7" y2="13.9"/><line x1="0" y1="0" x2="-10.6" y2="10.6"/><line x1="0" y1="0" x2="-13.9" y2="5.7"/><line x1="0" y1="0" x2="-15.0" y2="0.0"/><line x1="0" y1="0" x2="-13.9" y2="-5.7"/><line x1="0" y1="0" x2="-10.6" y2="-10.6"/><line x1="0" y1="0" x2="-5.7" y2="-13.9"/><line x1="0" y1="0" x2="-0.0" y2="-15.0"/><line x1="0" y1="0" x2="5.7" y2="-13.9"/><line x1="0" y1="0" x2="10.6" y2="-10.6"/><line x1="0" y1="0" x2="13.9" y2="-5.7"/></g><circle r="3" fill="#F6EEDC"/></g></g></svg>
-              <b>Rickshaw</b><span>The classic</span>
-            </button>
-            <button class="ride" type="button" data-ride="cng" aria-pressed="false">
-              <svg viewBox="0 0 160 100" aria-hidden="true"><rect x="22" y="52" width="108" height="32" rx="13" fill="#2E9E4F"/><path d="M44 54L52 24Q54 20 60 20H98Q104 20 106 24L114 54Z" fill="#2E9E4F"/><rect x="48" y="14" width="64" height="7" rx="3" fill="#16201b"/><path d="M57 28H98L104 47H52Z" fill="#0d1b2b"/><rect x="22" y="68" width="108" height="5" fill="#F7C631"/><circle cx="132" cy="62" r="5" fill="#fff3c4"/><rect x="19" y="62" width="4" height="8" rx="1" fill="#ff3b3b"/><g transform="translate(48 86)"><g class="wh"><circle r="13" fill="#141414"/><circle r="7.5" fill="#aeb6ba"/><circle cx="4.4" cy="0.0" r="1.6" fill="#F6EEDC"/><circle cx="1.4" cy="4.2" r="1.6" fill="#F6EEDC"/><circle cx="-3.6" cy="2.6" r="1.6" fill="#F6EEDC"/><circle cx="-3.6" cy="-2.6" r="1.6" fill="#F6EEDC"/><circle cx="1.4" cy="-4.2" r="1.6" fill="#F6EEDC"/></g></g><g transform="translate(112 86)"><g class="wh"><circle r="13" fill="#141414"/><circle r="7.5" fill="#aeb6ba"/><circle cx="4.4" cy="0.0" r="1.6" fill="#F6EEDC"/><circle cx="1.4" cy="4.2" r="1.6" fill="#F6EEDC"/><circle cx="-3.6" cy="2.6" r="1.6" fill="#F6EEDC"/><circle cx="-3.6" cy="-2.6" r="1.6" fill="#F6EEDC"/><circle cx="1.4" cy="-4.2" r="1.6" fill="#F6EEDC"/></g></g></svg>
-              <b>CNG</b><span>Loud and quick</span>
-            </button>
-            <button class="ride" type="button" data-ride="bus" aria-pressed="false">
-              <svg viewBox="0 0 160 100" aria-hidden="true"><rect x="10" y="24" width="140" height="52" rx="10" fill="#2443A0"/><rect x="10" y="24" width="140" height="7" rx="3" fill="#F6EEDC"/><rect x="18" y="36" width="124" height="20" rx="3" fill="#0d1b2b"/><g stroke="#2443A0" stroke-width="2"><line x1="46" y1="36" x2="46" y2="56"/><line x1="76" y1="36" x2="76" y2="56"/><line x1="106" y1="36" x2="106" y2="56"/></g><rect x="10" y="63" width="140" height="5" fill="#F7C631"/><circle cx="147" cy="66" r="4" fill="#fff3c4"/><rect x="8" y="62" width="4" height="8" rx="1" fill="#ff3b3b"/><g transform="translate(40 80)"><g class="wh"><circle r="15" fill="#141414"/><circle r="9.9" fill="#aeb6ba"/><circle r="3.6" fill="#F6EEDC"/><circle cx="6.9" cy="0.0" r="1.6" fill="#F6EEDC"/><circle cx="4.9" cy="4.9" r="1.6" fill="#F6EEDC"/><circle cx="0.0" cy="6.9" r="1.6" fill="#F6EEDC"/><circle cx="-4.9" cy="4.9" r="1.6" fill="#F6EEDC"/><circle cx="-6.9" cy="0.0" r="1.6" fill="#F6EEDC"/><circle cx="-4.9" cy="-4.9" r="1.6" fill="#F6EEDC"/><circle cx="-0.0" cy="-6.9" r="1.6" fill="#F6EEDC"/><circle cx="4.9" cy="-4.9" r="1.6" fill="#F6EEDC"/></g></g><g transform="translate(120 80)"><g class="wh"><circle r="15" fill="#141414"/><circle r="9.9" fill="#aeb6ba"/><circle r="3.6" fill="#F6EEDC"/><circle cx="6.9" cy="0.0" r="1.6" fill="#F6EEDC"/><circle cx="4.9" cy="4.9" r="1.6" fill="#F6EEDC"/><circle cx="0.0" cy="6.9" r="1.6" fill="#F6EEDC"/><circle cx="-4.9" cy="4.9" r="1.6" fill="#F6EEDC"/><circle cx="-6.9" cy="0.0" r="1.6" fill="#F6EEDC"/><circle cx="-4.9" cy="-4.9" r="1.6" fill="#F6EEDC"/><circle cx="-0.0" cy="-6.9" r="1.6" fill="#F6EEDC"/><circle cx="4.9" cy="-4.9" r="1.6" fill="#F6EEDC"/></g></g></svg>
-              <b>Bus</b><span>Big and bold</span>
-            </button>
-          </div>
-        </div>
-        <div class="after">
-          <p class="lede">A Dhaka-themed property trading game. Roll the dice, trade with friends and build your way to the top. Free, in your phone's browser.</p>
-          <div class="cta">
-            <a class="btn btn-light btn-lg" href="https://marouf272-debug.github.io/babsha/" data-play>Play now <i data-lucide="arrow-right"></i></a>
-              </div>
-        </div>
-      </div>
+      <h1 class="hero-title">Roll. Build. Win.</h1>
+      <p class="lede">A Dhaka-themed property trading game. Roll the dice, trade with friends and build your way to the top. Free, in your phone's browser.</p>
+      <a class="btn btn-gold btn-lg" href="https://marouf272-debug.github.io/babsha/" data-play>Play now <i data-lucide="arrow-right"></i></a>
     </div>
     <p class="scroll-hint" id="scrollHint"><i data-lucide="chevron-down"></i> Scroll to roll</p>
   </section>
 
   <section class="chapter stop" data-k="1" data-side="left">
     <article class="panel" data-tile="go">
-      <p class="eyebrow">Start</p>
       <h2>Everyone starts rich.</h2>
       <p>Everyone starts with the same cash, and passing GO pays you every lap. Two to six players on one phone, or take on the computer.</p>
-      <p class="chips"><span class="chip tilechip"></span><span class="chip">Paid every lap</span></p>
+      <p class="chips"><span class="chip tilechip"></span></p>
     </article>
   </section>
-
   <section class="chapter stop" data-k="2" data-side="right">
     <article class="panel" data-tile="chawk_bazar">
-      <p class="eyebrow">Old Dhaka</p>
-      <h2>Buy the streets.</h2>
+      <h2>Streets for sale.</h2>
       <p>Land on a street nobody owns and you can buy it. Pass, and it goes to a live auction.</p>
       <p class="chips"><span class="chip tilechip"></span></p>
     </article>
   </section>
-
   <section class="chapter stop" data-k="3" data-side="left">
     <article class="panel" data-tile="motijheel">
-      <p class="eyebrow">Light blue set</p>
       <h2>Build it up.</h2>
       <p>Own a whole color set and its rent doubles. Then build, house by house, up to four, with a hotel on top.</p>
-      <p class="chips"><span class="chip tilechip"></span><span class="chip">4 houses + hotel</span></p>
+      <p class="chips"><span class="chip tilechip"></span></p>
     </article>
   </section>
-
   <section class="chapter stop" data-k="4" data-side="right">
     <article class="panel" data-tile="jam">
-      <p class="eyebrow">Corner</p>
       <h2>Stuck in traffic.</h2>
       <p>Roll three doubles in a row, land on Go to Jam, or draw the wrong card and you are in Jam. Pay the fine, roll doubles or play a card to get out.</p>
-      <p class="chips"><span class="chip tilechip"></span><span class="chip">Pay, roll or play a card</span></p>
+      <p class="chips"><span class="chip tilechip"></span></p>
     </article>
   </section>
-
   <section class="chapter stop" data-k="5" data-side="left">
     <article class="panel" data-tile="sadarghat">
-      <p class="eyebrow">Transit hubs</p>
-      <h2>Own the routes.</h2>
+      <h2>Run the routes.</h2>
       <p>Kamalapur, Sadarghat, Gabtoli and the airport. The more hubs you own, the more every visit costs. DESCO and WASA charge by the dice: 40 times your roll, or 100 if you own both.</p>
-      <p class="chips"><span class="chip tilechip"></span><span class="chip">4 hubs</span></p>
+      <p class="chips"><span class="chip tilechip"></span></p>
     </article>
   </section>
-
   <section class="chapter stop" data-k="6" data-side="right">
     <article class="panel" data-tile="cha_adda">
-      <p class="eyebrow">Corner</p>
       <h2>Pull up a chair.</h2>
       <p>Cha Adda is a free rest stop: no rent, no fine. It is also where deals get made. Trade properties and cash with any player, mortgages and all.</p>
-      <p class="chips"><span class="chip tilechip"></span><span class="chip">Free rest stop</span></p>
+      <p class="chips"><span class="chip tilechip"></span></p>
     </article>
   </section>
-
   <section class="chapter stop" data-k="7" data-side="left">
     <article class="panel" data-tile="banani">
-      <p class="eyebrow">Green set</p>
       <h2>Roll big.</h2>
       <p>Doubles give you another roll, and a double six carries you twelve tiles in one throw. The green set is pricey, so the rent hurts.</p>
-      <p class="chips"><span class="chip tilechip"></span><span class="chip">Doubles roll again</span></p>
+      <p class="chips"><span class="chip tilechip"></span></p>
     </article>
   </section>
-
   <section class="chapter stop" data-k="8" data-side="right">
     <article class="panel" data-tile="lucky_3">
-      <p class="eyebrow">Lucky and DOHS</p>
       <h2>Pull a card.</h2>
       <p>Metro Rail rides, flooded roads, kite contests and load-shedding. Land on Lucky or DOHS and Dhaka happens to you.</p>
-      <div class="cards" id="cards"></div>
+      <p class="chips"><span class="chip tilechip"></span></p><div class="cards" id="cards"></div>
     </article>
   </section>
-
   <section class="chapter stop" data-k="9" data-side="left">
     <article class="panel" data-tile="baridhara">
-      <p class="eyebrow">Dark blue set</p>
       <h2>Finish rich.</h2>
       <p>The last stretch of the board is the most valuable. Run out of money and you are bankrupt. The last player standing wins.</p>
-      <p class="chips"><span class="chip tilechip"></span><span class="chip">Last one standing wins</span></p>
+      <p class="chips"><span class="chip tilechip"></span></p>
     </article>
   </section>
 
   <section class="chapter features" data-k="10" id="features">
     <div class="wrap">
-      <p class="eyebrow">The game</p>
       <h2 class="big">Everything a board game night needs.</h2>
       <p class="sub">No download, no account. Open it and play.</p>
-      <div class="bento">
-        <article class="b b-a"><i data-lucide="users"></i><h3>Pass and play</h3><p>Two to six players on one phone. Hand it over, tap to start, roll.</p><div class="dots" aria-hidden="true"><span style="--c:#E0262F"></span><span style="--c:#2E6FE0"></span><span style="--c:#2E9E4F"></span><span style="--c:#F2B91F"></span><span style="--c:#8A3FD1"></span><span style="--c:#12A5B5"></span></div></article>
-        <article class="b b-b"><i data-lucide="bot"></i><h3>Play the computer</h3><p>Opponents that buy, bid, build and trade.</p><div class="levels" aria-hidden="true"><span>Easy</span><span>Medium</span><span class="hot">Hard</span></div></article>
-        <article class="b b-c"><i data-lucide="gavel"></i><h3>Live auctions</h3><p>Pass on a purchase and it goes to the whole table.</p></article>
-        <article class="b b-d"><i data-lucide="handshake"></i><h3>Trade</h3><p>Swap properties and cash to finish a set first.</p></article>
-        <article class="b b-e"><i data-lucide="hammer"></i><h3>Build and mortgage</h3><p>Houses go up evenly across a set, with a hotel on top. Mortgage a property when cash runs short.</p></article>
-        <article class="b b-f"><i data-lucide="smartphone"></i><h3>Install it</h3><p>Add it to your home screen. It works offline.</p></article>
-        <article class="b b-g soon"><span class="badge">Coming soon</span><i data-lucide="sparkles"></i><h3>One more thing</h3><p>A new feature is on its way.</p></article>
-      </div>
-      <p class="fine">Choose your starting cash. Optional turn timer.</p>
+      <ol class="ledger"><li><h3>Pass and play</h3><p>Two to six players on one phone. Hand it over, tap to start, roll.</p></li><li><h3>Play the computer</h3><p>Easy, Medium or Hard opponents that buy, bid, build and trade.</p></li><li><h3>Live auctions</h3><p>Pass on a purchase and it goes to the whole table.</p></li><li><h3>Trade</h3><p>Swap properties and cash to finish a set first.</p></li><li><h3>Build and mortgage</h3><p>Houses go up evenly across a set, with a hotel on top. Mortgage a property when cash runs short.</p></li><li><h3>Install it</h3><p>Add it to your home screen. It works offline.</p></li><li><h3>House rules</h3><p>Choose your starting cash and add an optional turn timer.</p></li><li><h3>No account</h3><p>Open the link and play. Nothing to download or sign up for.</p></li><li class="soon"><h3>One more thing</h3><p>A new feature is on its way.</p><span class="tag">Coming soon</span></li></ol>
     </div>
     <div class="marquee" aria-label="Every property on the board"><div class="track" id="track"></div></div>
   </section>
 
   <section class="chapter play" data-k="11" id="play">
     <div class="wrap">
-      <div>
-        <p class="eyebrow">Ready?</p>
-        <h2 class="big">Roll the dice.</h2>
-        <p class="sub">Babsha is free to play. Grab a friend and roll.</p>
-        <a class="btn btn-light btn-lg" href="https://marouf272-debug.github.io/babsha/" data-play>Play Babsha <i data-lucide="arrow-right"></i></a>
-      </div>
+      <h2 class="huge">Roll the dice.</h2>
+      <p class="sub">Babsha is free to play. Grab a friend and roll.</p>
+      <a class="btn btn-gold btn-lg" href="https://marouf272-debug.github.io/babsha/" data-play>Play Babsha <i data-lucide="arrow-right"></i></a>
     </div>
     <footer class="foot">
       <span>Babsha, a Dhaka property trading game.</span>

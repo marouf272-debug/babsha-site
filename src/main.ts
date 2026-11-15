@@ -3,11 +3,13 @@
 // Each stop's travel is the dice total between the two tiles, so the pips shown always equal the hops taken.
 
 import './style.css';
-import '@fontsource/bricolage-grotesque/600.css';
-import '@fontsource/bricolage-grotesque/700.css';
-import '@fontsource/bricolage-grotesque/800.css';
+import '@fontsource/gloock/400.css';
+import '@fontsource/hanken-grotesk/500.css';
+import '@fontsource/hanken-grotesk/600.css';
+import '@fontsource/hanken-grotesk/700.css';
+import '@fontsource/hanken-grotesk/800.css';
 import * as THREE from 'three';
-import { createIcons, Users, Bot, Gavel, Handshake, Hammer, Smartphone, ArrowRight, ChevronDown, Sparkles } from 'lucide';
+import { createIcons, ArrowRight, ChevronDown } from 'lucide';
 import { Board, faceUp, type Ride, type ThemeName } from './board';
 import tilesData from './data/tiles.json';
 import cardsData from './data/cards.json';
@@ -17,8 +19,6 @@ const root = document.documentElement;
 const clamp = (x: number, a = 0, b = 1) => Math.min(b, Math.max(a, x));
 const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
 const smooth = (a: number, b: number, x: number) => { const t = clamp((x - a) / (b - a)); return t * t * (3 - 2 * t); };
-const TAKA = '৳';
-const money = (n: number) => `${TAKA}${n.toLocaleString('en-US')}`;
 const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 // ---------- static content filled from the game's own data ----------
@@ -28,12 +28,38 @@ const TILES = tilesData.tiles as Tile[];
 const en_ = en as Record<string, string>;
 const groups: Record<string, string> = { brown: '#8A5232', light_blue: '#67BFE6', pink: '#EC3E8C', orange: '#EE7D2B', red: '#E0262F', yellow: '#F7C631', green: '#2E9E4F', dark_blue: '#2443A0' };
 
+// The tilted board drawn on the box lid: a ring of tiles with colour bars around a felt field.
+function buildLidArt(): void {
+  const art = document.getElementById('lidArt');
+  if (!art) return;
+  const bars = ['#8A5232', '#8A5232', '#67BFE6', '#67BFE6', '#67BFE6', '#EC3E8C', '#EC3E8C', '#EC3E8C', '#EE7D2B', '#EE7D2B', '#EE7D2B', '#E0262F', '#E0262F', '#E0262F', '#F7C631', '#F7C631', '#F7C631', '#2E9E4F', '#2E9E4F', '#2E9E4F', '#2443A0', '#2443A0'];
+  const bd = document.createElement('div');
+  bd.className = 'bd';
+  let n = 0;
+  for (let r = 0; r < 11; r++) for (let c = 0; c < 11; c++) {
+    if (r !== 0 && r !== 10 && c !== 0 && c !== 10) continue;
+    const corner = (r === 0 || r === 10) && (c === 0 || c === 10);
+    const cell = document.createElement('i');
+    cell.style.gridArea = `${r + 1} / ${c + 1}`;
+    if (corner) cell.className = 'k';
+    else { const b = document.createElement('b'); b.style.background = bars[n++ % bars.length]!; cell.append(b); }
+    bd.append(cell);
+  }
+  const felt = document.createElement('u');
+  const label = document.createElement('span');
+  label.textContent = 'Babsha';
+  felt.append(label);
+  bd.append(felt);
+  art.append(bd);
+}
+
 function fillContent(): void {
-  createIcons({ icons: { Users, Bot, Gavel, Handshake, Hammer, Smartphone, ArrowRight, ChevronDown, Sparkles } });
+  createIcons({ icons: { ArrowRight, ChevronDown } });
+  buildLidArt();
   const chipOf = (t: Tile) => {
     const chip = document.createElement('span');
     const sw = document.createElement('i');
-    sw.style.setProperty('--c', t.group ? groups[t.group]! : '#FBF4E4');
+    sw.style.setProperty('--c', t.group ? groups[t.group]! : '#0A2E21');
     chip.append(sw, en_[t.nameKey] ?? t.id);
     return chip;
   };
@@ -45,7 +71,7 @@ function fillContent(): void {
   const track = document.getElementById('track')!;
   const buyable = TILES.filter((t) => t.type === 'property' || t.type === 'hub' || t.type === 'utility');
   for (let rep = 0; rep < 2; rep++) for (const t of buyable) { const c = chipOf(t); c.className = 'chip'; if (rep) c.setAttribute('aria-hidden', 'true'); track.append(c); }
-  const allCards = Object.values(cardsData.decks).flat() as Array<{ id: string; textKey: string; effect: { amount?: number } }>;
+  const allCards = Object.values(cardsData.decks).flat() as Array<{ id: string; textKey: string }>;
   const cards = document.getElementById('cards')!;
   for (const [id, label, color] of [['lucky_10', 'Lucky', '#C42A72'], ['dohs_06', 'DOHS', '#0E7C88']] as const) {
     const c = allCards.find((x) => x.id === id);
@@ -56,7 +82,7 @@ function fillContent(): void {
     head.textContent = label;
     head.style.background = color;
     const body = document.createElement('span');
-    body.textContent = (en_[c.textKey] ?? '').replace('{amount}', money(c.effect.amount ?? 0));
+    body.textContent = en_[c.textKey] ?? '';
     el.append(head, body);
     cards.append(el);
   }
@@ -90,12 +116,12 @@ const tagOf = (r: Roll) => (r.a !== r.b ? '' : r.a === 6 ? 'Double six!' : r.a =
 
 const C = (h: string) => new THREE.Color(h);
 const V = (x: number, y: number, z: number) => new THREE.Vector3(x, y, z);
-const NIGHT = { hor: C('#0b1613'), top: C('#02060a'), sky: C('#8fa7d6'), gnd: C('#0a0f0d'), hi: 0.3, sun: C('#ffd9a8'), si: 1.7, sp: V(-6, 10, 6), rim: C('#4f78c8'), ri: 0.55, st: 1 };
+const NIGHT = { hor: C('#0a3a29'), top: C('#041d13'), sky: C('#cfe3d4'), gnd: C('#06281b'), hi: 0.32, sun: C('#fff0cf'), si: 1.5, sp: V(-6, 10, 6), rim: C('#bcd9c8'), ri: 0.35, st: 1 };
 const CYCLE = [
   { t: 0.0, ...NIGHT },
-  { t: 0.12, hor: C('#f3b79c'), top: C('#5f78b8'), sky: C('#ffd0b0'), gnd: C('#5b4a52'), hi: 0.4, sun: C('#ffb98a'), si: 2.2, sp: V(9, 4.5, 7), rim: C('#9db8ff'), ri: 0.4, st: 0.12 },
-  { t: 0.4, hor: C('#efe7d8'), top: C('#9dbfe3'), sky: C('#FFF4E0'), gnd: C('#6B5B45'), hi: 0.5, sun: C('#fff1d6'), si: 2.6, sp: V(-5, 11, 8), rim: C('#c5d8ff'), ri: 0.4, st: 0 },
-  { t: 0.75, hor: C('#f0a35e'), top: C('#6b4a7a'), sky: C('#ffd59a'), gnd: C('#6a4a35'), hi: 0.4, sun: C('#ff9a4d'), si: 2.5, sp: V(-9, 5, 5), rim: C('#8f7ac8'), ri: 0.4, st: 0 },
+  { t: 0.12, hor: C('#b9c9a3'), top: C('#5d8a72'), sky: C('#f1e6cc'), gnd: C('#35503f'), hi: 0.45, sun: C('#ffe2b0'), si: 1.9, sp: V(9, 4.5, 7), rim: C('#cfe3d6'), ri: 0.35, st: 0.1 },
+  { t: 0.4, hor: C('#d8e4cf'), top: C('#8fb9a4'), sky: C('#fff4de'), gnd: C('#4a6b54'), hi: 0.5, sun: C('#fff1d6'), si: 2.1, sp: V(-5, 11, 8), rim: C('#d7ebe0'), ri: 0.35, st: 0 },
+  { t: 0.75, hor: C('#cdb878'), top: C('#4d7a5f'), sky: C('#ffe9b8'), gnd: C('#4a5a35'), hi: 0.42, sun: C('#ffd68a'), si: 2.0, sp: V(-9, 5, 5), rim: C('#c9dcc2'), ri: 0.35, st: 0 },
   { t: 1.0, ...NIGHT },
 ];
 const tmpC = new THREE.Color();
@@ -117,7 +143,7 @@ function applyCycle(b: Board, P: number): void {
   mix(b.rim.color, a.rim, c.rim);
   b.rim.intensity = lerp(a.ri, c.ri, f);
   const night = lerp(a.st, c.st, f);
-  (b.stars.material as THREE.PointsMaterial).opacity = night;
+  (b.stars.material as THREE.PointsMaterial).opacity = night * 0.22; // a faint warm cream, never a night-city sky
   b.setNight(night);
   void tmpC;
 }
@@ -141,9 +167,9 @@ fillContent();
 async function boot(): Promise<void> {
   try {
     await Promise.all([
-      document.fonts.load('700 40px "Noto Sans Bengali"', `${TAKA}0123456789Abc`),
-      document.fonts.load('600 30px "Noto Sans Bengali"', `${TAKA}0123456789Abc`),
-      document.fonts.load('800 40px "Bricolage Grotesque"', 'Babsha'),
+      document.fonts.load('400 40px "Gloock"', 'Babsha'),
+      document.fonts.load('800 40px "Hanken Grotesk"', 'Babsha'),
+      document.fonts.load('700 30px "Hanken Grotesk"', 'Babsha'),
     ]);
     await document.fonts.ready;
   } catch { /* labels fall back to the system font */ }
@@ -152,7 +178,7 @@ async function boot(): Promise<void> {
   let board: Board;
   try {
     const low = matchMedia('(pointer: coarse)').matches || innerWidth < 700;
-    const theme = (new URLSearchParams(location.search).get('theme') ?? 'obsidian') as ThemeName;
+    const theme = (new URLSearchParams(location.search).get('theme') ?? 'heritage') as ThemeName;
     board = new Board(canvas, { pixelRatio: Math.min(devicePixelRatio, low ? 1.25 : 1.75), quality: low ? 'low' : 'high', theme });
   } catch {
     root.classList.remove('locked');
@@ -174,7 +200,7 @@ async function boot(): Promise<void> {
       tops[k] = r.top + scrollY;
       heights[k] = r.height;
       starts[k] = k === 0 ? -Infinity : tops[k]! - (k === 10 ? 1.0 : 0.3) * vh;
-      ends[k] = k === 10 ? tops[k]! + 0.4 * vh : tops[k]! + 1.25 * vh; // longer travel: the vehicle moves slower per scroll
+      ends[k] = k === 10 ? tops[k]! + 0.4 * vh : tops[k]! + 1.0 * vh; // the pawn chases this at a top speed, so the scroll can stay short
     });
   };
   measure();
@@ -231,6 +257,7 @@ async function boot(): Promise<void> {
 
   // the ride picker: hovering previews the vehicle on the board, a click makes it the pawn and opens the site
   const pick = document.getElementById('pick') as HTMLElement;
+  const table = document.getElementById('table') as HTMLElement;
   const buttons = [...document.querySelectorAll<HTMLButtonElement>('.ride')];
   let ride: Ride = 'rickshaw';
   buttons.forEach((b) => {
@@ -246,11 +273,14 @@ async function boot(): Promise<void> {
       root.classList.add('chosen');
       chosenAt = performance.now();
       warm = 3;
+      setTimeout(() => { table.hidden = true; }, 2600);
     });
   });
   pick.addEventListener('mouseleave', () => board.setRide(ride));
 
   let ys = scrollY, last = performance.now(), lastDraw = 0, chosenAt = 0;
+  let pawnAbs = 0, pawnVel = 0; // the pawn chases the scroll's target at a top speed
+  const VMAX = 4.6; // tiles per second
   const diceAt = new THREE.Vector3();
   const frame = (now: number) => {
     const dt = Math.min(0.05, (now - last) / 1000);
@@ -263,7 +293,7 @@ async function boot(): Promise<void> {
     const u = k === 0 ? 0 : clamp((ys - starts[k]!) / (ends[k]! - starts[k]!));
     const idle = k <= 1;
     if (!chosenAt && now - lastDraw < 66) return; // hidden behind the picker: draw at ~15 fps
-    const still = y === ys && !idle && warm <= 0;
+    const still = y === ys && !idle && warm <= 0 && Math.abs(pawnVel) < 0.02;
     if (still && now - lastDraw < 33) return; // nothing is moving: redraw at ~30 fps so kites still drift
     lastDraw = now;
     warm = Math.max(0, warm - 1);
@@ -291,6 +321,12 @@ async function boot(): Promise<void> {
       vis = smooth(0, 0.05, v) * (1 - smooth(0.84, 0.98, v)) * (k === 1 ? 1 - u : 1);
     }
 
+    // the pawn drives to the target at a top speed with a smooth start and stop
+    const diff = tokenAbs - pawnAbs;
+    pawnVel += (clamp(diff * 3.2, -VMAX, VMAX) - pawnVel) * Math.min(1, dt * 7);
+    pawnAbs += pawnVel * dt;
+    if (Math.abs(diff) < 0.003 && Math.abs(pawnVel) < 0.02) { pawnAbs = tokenAbs; pawnVel = 0; }
+
     // camera
     const aspect = vw / vh;
     const pk = aspect < 1 ? Math.pow(1 / aspect, 0.7) : 1;
@@ -301,7 +337,7 @@ async function boot(): Promise<void> {
     const pull = k <= 1 ? 1 + (1 - rv) * 0.5 : 1;
     const st: Style = { az: lerp(from.az, to.az, e), D: lerp(from.D, to.D, e) * pk * pull, H: lerp(from.H, to.H, e) * pk * pull, sx: lerp(from.sx, to.sx, e) };
     const focus = k === 1 ? new THREE.Vector3().lerpVectors(new THREE.Vector3(0, 0, 0), board.center(0), e)
-      : k >= 2 && k <= 9 ? board.focusAt(tokenAbs)
+      : k >= 2 && k <= 9 ? board.focusAt(pawnAbs)
       : k === 10 ? new THREE.Vector3().lerpVectors(board.center(39), new THREE.Vector3(0, 0, 0), e)
       : new THREE.Vector3(0, 0, 0);
     // slow drift in the hero so the board is never still
@@ -314,8 +350,9 @@ async function boot(): Promise<void> {
     const wide = vw > 900;
     const stopWeight = st.D < 10 * pk ? 1 : 0; // panels only matter close to a stop
     const hw = k === 0 ? 1 : k === 1 ? 1 - e : 0; // hero: board sits low, under the headline
-    board.camera.setViewOffset(vw, vh, wide ? -st.sx * 0.17 * vw * stopWeight : 0, (wide ? 0 : 0.2 * vh * stopWeight) - (wide ? 0.17 : 0.2) * vh * hw, vw, vh);
-    board.placeToken(tokenAbs);
+    board.camera.setViewOffset(vw, vh, wide ? -st.sx * 0.17 * vw * stopWeight : 0, (wide ? 0 : 0.2 * vh * stopWeight) - (wide ? 0.21 : 0.2) * vh * hw, vw, vh);
+    board.placeToken(pawnAbs, dt);
+    board.motion(Math.abs(pawnVel) / VMAX, dt);
     poseDice(roll, T, vis, diceAt, dist);
     setHud(roll, vis > 0.2);
     applyCycle(board, clamp((ys - tops[1]!) / (tops[10]! - tops[1]!)));
@@ -328,12 +365,12 @@ async function boot(): Promise<void> {
       const p = panels[i];
       if (!p) continue;
       const spare = i === 9 ? 0.9 * vh : 0; // the last stop has a spacer while the camera pulls back
-      const s = smooth(tops[i]! + 1.3 * vh, tops[i]! + 1.55 * vh, ys) * (1 - smooth(tops[i]! + heights[i]! - spare - 0.55 * vh, tops[i]! + heights[i]! - spare - 0.3 * vh, ys));
+      const s = smooth(tops[i]! + 1.05 * vh, tops[i]! + 1.3 * vh, ys) * smooth(0.7, 0.08, Math.abs(absAt(i) - pawnAbs)) * (1 - smooth(tops[i]! + heights[i]! - spare - 0.55 * vh, tops[i]! + heights[i]! - spare - 0.3 * vh, ys));
       p.style.setProperty('--show', s.toFixed(3));
       p.classList.toggle('on', s > 0.6);
     }
     // the board fades out as the features section takes over the page
-    const show = k === 10 ? 1 - smooth(0.45, 1, u) : 1;
+    const show = k === 10 ? 1 - smooth(0.2, 0.75, u) : 1;
     canvas.style.opacity = show.toFixed(3);
     if (show < 0.01) return;
     board.animate(now / 1000);
