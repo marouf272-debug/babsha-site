@@ -83,13 +83,13 @@ h2.huge { font-size: clamp(64px, 11vw, 150px); letter-spacing: -.03em; }
 .pick { display: grid; justify-items: center; gap: 16px; transition: opacity .6s ease, transform .8s ease, visibility .8s; }
 .pick-title { margin: 0; font: 700 13px/1.3 var(--font); letter-spacing: .3em; text-transform: uppercase; color: var(--gold); text-align: center; }
 .rides { display: flex; gap: clamp(18px, 3.4vw, 52px); justify-content: center; }
-.ride { all: unset; box-sizing: border-box; cursor: pointer; display: flex; flex-direction: column; align-items: center; width: var(--disc, 150px); transition: transform .35s cubic-bezier(.2, .8, .2, 1); }
+.ride { all: unset; box-sizing: border-box; cursor: pointer; display: flex; flex-direction: column; align-items: center; width: max(var(--disc, 150px), 132px); transition: transform .35s cubic-bezier(.2, .8, .2, 1); }
 .table { --disc: clamp(84px, 17svh, 150px); }
 .ride .disc { width: var(--disc); height: var(--disc); border-radius: 50%; display: grid; place-items: center; background: radial-gradient(circle at 35% 30%, #17835b, #0b4a33); border: 3px solid transparent; background: radial-gradient(circle at 35% 30%, #17835b, #0b4a33) padding-box, linear-gradient(135deg, #F0DC9B, #B8943C 40%, #8A6A1C 62%, #E9D28A) border-box;
   box-shadow: 0 0 0 7px var(--felt-1), 0 0 0 9px #B8943C, 0 26px 40px rgba(0, 0, 0, .5); transition: box-shadow .3s ease; }
 .ride .disc svg { width: 70%; height: auto; }
 .ride b { font: 400 clamp(20px, 3.2svh, 28px)/1 var(--font-d); margin-top: clamp(14px, 2.4svh, 22px); color: var(--cream); }
-.ride .cap { font: 700 11px/1.3 var(--font); letter-spacing: .28em; text-transform: uppercase; color: var(--gold); margin-top: 6px; }
+.ride .cap { white-space: nowrap; font: 700 11px/1.3 var(--font); letter-spacing: .2em; text-transform: uppercase; color: var(--gold); margin-top: 6px; }
 .ride:hover, .ride:focus-visible { transform: translateY(-10px); }
 .ride:hover .disc, .ride:focus-visible .disc { box-shadow: 0 0 0 7px var(--felt-1), 0 0 0 9px var(--cream), 0 30px 50px rgba(0, 0, 0, .55); }
 .ride:focus-visible { outline: 3px solid var(--gold); outline-offset: 12px; border-radius: 12px; }
@@ -193,7 +193,9 @@ html:not(.chosen) .scroll-hint { display: none; }
   .lid .sub { font-size: 15px; margin: 6px 0 0; }
   .die { display: none; }
   .table { --disc: clamp(76px, 12svh, 112px); }
-  .rides { gap: 14px; }
+  .rides { gap: 6px; }
+  .ride { width: max(var(--disc), 112px); }
+  .ride .cap { font-size: 9.5px; letter-spacing: .12em; }
 }
 @media (max-width: 560px) { .brand { font-size: 19px; letter-spacing: .14em; gap: 8px; } .brand .mark { width: 32px; height: 28px; } }
 
