@@ -435,6 +435,14 @@ export class Board {
     g.strokeStyle = `rgba(${this.T.emblem},0.85)`;
     g.lineWidth = 5; g.beginPath(); g.arc(cx, cy, S * 0.285, 0, Math.PI * 2); g.stroke();
     g.lineWidth = 2; g.beginPath(); g.arc(cx, cy, S * 0.27, 0, Math.PI * 2); g.stroke();
+    // four small T seals on the ring, like a maker's marks
+    for (const [sx, sy] of [[0, -1], [1, 0], [0, 1], [-1, 0]] as const) {
+      const px = cx + sx * S * 0.285, py = cy + sy * S * 0.285;
+      g.fillStyle = this.T.felt[2]; g.beginPath(); g.arc(px, py, 38, 0, Math.PI * 2); g.fill();
+      g.strokeStyle = g.fillStyle = `rgba(${this.T.emblem},0.9)`; g.lineWidth = 3;
+      g.beginPath(); g.arc(px, py, 38, 0, Math.PI * 2); g.stroke();
+      drawT(g, px, py, 34);
+    }
     // emblem: the two dice
     const die = (x: number, y: number, rot: number, fill: string, pip: string) => {
       g.save(); g.translate(x, y); g.rotate(rot);
@@ -613,6 +621,7 @@ export class Board {
     const glass = new THREE.MeshPhysicalMaterial({ color: '#0d1b2b', roughness: 0.05, metalness: 0.2, clearcoat: 1 });
     const lamp = new THREE.MeshStandardMaterial({ color: '#fff3c4', emissive: '#ffe08a', emissiveIntensity: 0.9 });
     const brake = new THREE.MeshStandardMaterial({ color: '#ff3b3b', emissive: '#ff2020', emissiveIntensity: 0.5 });
+    const badge = new THREE.MeshStandardMaterial({ map: tBadge(), transparent: true, roughness: 0.4, metalness: 0.3, polygonOffset: true, polygonOffsetFactor: -2, depthWrite: false });
     const kit = (kind: Ride, scale: number) => {
       const g = new THREE.Group();
       const wheels: Array<{ g: THREE.Group; r: number }> = [];
@@ -625,6 +634,21 @@ export class Board {
         return m;
       };
       const box = (w: number, h: number, d: number) => new THREE.BoxGeometry(w, h, d);
+      // the T roundel: flat on the roof (the camera looks down), and one on each flank
+      const tBack = (x: number, y: number, z: number, size: number) => {
+        const m = new THREE.Mesh(new THREE.PlaneGeometry(size, size), badge);
+        m.position.set(x, y, z);
+        m.rotation.y = -Math.PI / 2;
+        g.add(m);
+      };
+      const tmark = (x: number, y: number, z: number, size: number) => {
+        for (const side of [1, -1]) {
+          const m = new THREE.Mesh(new THREE.PlaneGeometry(size, size), badge);
+          m.position.set(x, y, z * side);
+          m.rotation.y = side > 0 ? 0 : Math.PI;
+          g.add(m);
+        }
+      };
       // Each ride has its own wheel: thin spoked wire wheels, small fat solid-hub tires, big bolted bus wheels.
       const steel = new THREE.MeshStandardMaterial({ color: '#9aa3a8', roughness: 0.35, metalness: 0.85 });
       const wheel = (x: number, z: number, r: number, style: 'spoke' | 'solid' | 'bus') => {
@@ -665,11 +689,11 @@ export class Board {
       g.scale.setScalar(scale);
       this.token.add(g);
       this.rides[kind] = { g, wheels };
-      return { part, box, wheel };
+      return { part, box, wheel, tmark, tBack };
     };
 
     { // rickshaw: red, cream and yellow, painted hood
-      const { part, box, wheel } = kit('rickshaw', 1.5);
+      const { part, box, wheel, tmark, tBack } = kit('rickshaw', 1.5);
       const red = paint('#E0262F'), cream = paint('#F6EEDC'), yellow = paint('#F7C631'), teal = paint('#12A5B5'), pink = paint('#EC3E8C');
       wheel(-0.17, 0.17, 0.13, 'spoke'); wheel(-0.17, -0.17, 0.13, 'spoke'); wheel(0.24, 0, 0.11, 'spoke');
       part(box(0.62, 0.04, 0.2), red, 0.02, 0.17, 0);
@@ -685,9 +709,11 @@ export class Board {
       part(new THREE.CylinderGeometry(0.014, 0.014, 0.3, 8), chrome, 0.22, 0.26, 0, 0, 0, 0.15);
       part(new THREE.CylinderGeometry(0.012, 0.012, 0.3, 8).rotateX(Math.PI / 2), chrome, 0.19, 0.4, 0);
       part(new THREE.SphereGeometry(0.03, 10, 8), pink, 0.31, 0.3, 0);
+      tmark(0, 0.23, 0.1325, 0.065); // the only flank strip clear of the spoked wheels
+      tBack(-0.302, 0.3, 0, 0.13);
     }
     { // CNG auto: green body, black roof, yellow stripe
-      const { part, box, wheel } = kit('cng', 1.25);
+      const { part, box, wheel, tmark, tBack } = kit('cng', 1.25);
       const green = paint('#2E9E4F'), roof = paint('#16201b', 0.4), yellow = paint('#F7C631');
       wheel(0.3, 0, 0.1, 'solid'); wheel(-0.2, 0.19, 0.11, 'solid'); wheel(-0.2, -0.19, 0.11, 'solid');
       part(box(0.7, 0.14, 0.36), green, 0, 0.21, 0);
@@ -703,9 +729,10 @@ export class Board {
       part(box(0.014, 0.04, 0.05), brake, -0.355, 0.26, 0.12);
       part(box(0.014, 0.04, 0.05), brake, -0.355, 0.26, -0.12);
       part(new THREE.CylinderGeometry(0.012, 0.012, 0.22, 8).rotateX(Math.PI / 2), chrome, 0.2, 0.37, 0);
+      tmark(0.1, 0.205, 0.1825, 0.1);
     }
     { // bus: blue body, window band, yellow stripe
-      const { part, box, wheel } = kit('bus', 0.95);
+      const { part, box, wheel, tmark, tBack } = kit('bus', 0.95);
       const blue = paint('#2443A0'), cream = paint('#F6EEDC'), yellow = paint('#F7C631');
       wheel(0.32, 0.165, 0.115, 'bus'); wheel(0.32, -0.165, 0.115, 'bus'); wheel(-0.3, 0.165, 0.115, 'bus'); wheel(-0.3, -0.165, 0.115, 'bus');
       part(box(1.04, 0.3, 0.32), blue, 0, 0.29, 0);
@@ -717,6 +744,7 @@ export class Board {
       part(new THREE.SphereGeometry(0.03, 10, 8), lamp, 0.525, 0.22, -0.1);
       part(box(0.014, 0.04, 0.06), brake, -0.525, 0.23, 0.11);
       part(box(0.014, 0.04, 0.06), brake, -0.525, 0.23, -0.11);
+      tmark(-0.02, 0.262, 0.1625, 0.085);
     }
     this.setRide('rickshaw');
   }
@@ -822,6 +850,31 @@ function wrap(g: CanvasRenderingContext2D, text: string, max: number): string[] 
   return lines;
 }
 
+// The house mark: a small serif T drawn from rectangles so it never waits on a font.
+function drawT(g: CanvasRenderingContext2D, cx: number, cy: number, h: number): void {
+  const w = h * 0.74, t = h * 0.17;
+  g.fillRect(cx - w / 2, cy - h / 2, w, t); // bar
+  g.fillRect(cx - t / 2, cy - h / 2, t, h); // stem
+  g.fillRect(cx - w / 2, cy - h / 2, t * 0.5, t * 1.9); // bar ends
+  g.fillRect(cx + w / 2 - t * 0.5, cy - h / 2, t * 0.5, t * 1.9);
+  g.fillRect(cx - w * 0.2, cy + h / 2 - t * 0.5, w * 0.4, t * 0.5); // foot
+}
+
+// Gold roundel with the T, for the rides: transparent outside the ring.
+function tBadge(): THREE.CanvasTexture {
+  const c = document.createElement('canvas');
+  c.width = c.height = 128;
+  const g = c.getContext('2d')!;
+  g.strokeStyle = g.fillStyle = '#C79A2E';
+  g.lineWidth = 6;
+  g.beginPath(); g.arc(64, 64, 56, 0, Math.PI * 2); g.stroke();
+  drawT(g, 64, 64, 62);
+  const tex = new THREE.CanvasTexture(c);
+  tex.colorSpace = THREE.SRGBColorSpace;
+  tex.anisotropy = 8;
+  return tex;
+}
+
 function diceAtlas(bg: string, pip: string): THREE.CanvasTexture {
   const c = document.createElement('canvas');
   c.width = 384;
@@ -838,6 +891,7 @@ function diceAtlas(bg: string, pip: string): THREE.CanvasTexture {
     g.fillRect(ox, oy, 128, 128);
     g.fillStyle = pip;
     for (const [x, y] of spots[v]!) { g.beginPath(); g.arc(ox + x * 2, oy + y * 2, 12.5, 0, Math.PI * 2); g.fill(); }
+    g.globalAlpha = 0.4; drawT(g, ox + 64, oy + 96, 16); g.globalAlpha = 1; // clear of every pip layout
   }
   const tex = new THREE.CanvasTexture(c);
   tex.colorSpace = THREE.SRGBColorSpace;
